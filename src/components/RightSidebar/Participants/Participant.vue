@@ -103,6 +103,32 @@
 					</template>
 				</NcButton>
 			</template>
+
+			<!-- Info (i) button with popover for participant details -->
+			<NcPopover
+				placement="bottom"
+				:shown.sync="showInfoPopover"
+				:aria-label="t('spreed', 'Show participant details')"
+			>
+				<template #reference>
+					<NcButton
+						variant="tertiary"
+						:aria-label="t('spreed', 'Show participant details')"
+						:title="t('spreed', 'Show participant details')"
+						@click="showInfoPopover = !showInfoPopover"
+					>
+						<IconInformationOutline :size="20" />
+					</NcButton>
+				</template>
+				<div class="participant-info-popover">
+					<strong>{{ computedName }}</strong><br />
+					<span v-if="participant.actorId">ID: {{ participant.actorId }}</span><br />
+					<span v-if="participant.displayName">Display Name: {{ participant.displayName }}</span><br />
+					<span v-if="participant.actorType">Type: {{ participant.actorType }}</span><br />
+					<span v-if="statusMessage">Status: {{ statusMessage }}</span>
+					<!-- Add more participant details as needed -->
+				</div>
+			</NcPopover>
 		</template>
 
 		<!-- Participant's actions menu -->
@@ -360,6 +386,8 @@ import { formattedTime } from '../../../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
 import { readableNumber } from '../../../utils/readableNumber.ts'
 import { getPreloadedUserStatus, getStatusMessage } from '../../../utils/userStatus.ts'
+import NcPopover from '@nextcloud/vue/components/NcPopover'
+import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 
 export default {
 	name: 'Participant',
@@ -376,6 +404,8 @@ export default {
 		NcListItem,
 		NcTextArea,
 		ParticipantPermissionsEditor,
+		NcPopover,
+		IconInformationOutline,
 		// Icons
 		Account,
 		AccountMinusIcon,
@@ -432,6 +462,7 @@ export default {
 			internalNote: '',
 			disabled: false,
 			isLoading: false,
+			showInfoPopover: false,
 		}
 	},
 
@@ -1056,6 +1087,13 @@ export default {
 
 .critical > :deep(.action-button) {
 	color: var(--color-error);
+}
+
+.participant-info-popover {
+	padding: 1em;
+	min-width: 200px;
+	font-size: 0.95em;
+	line-height: 1.5;
 }
 
 </style>
